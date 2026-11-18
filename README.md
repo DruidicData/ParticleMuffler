@@ -7,10 +7,6 @@ same GUI layout, textures and workflow, with the sounds swapped for particles.
 
 It does not need to be installed on the server and works on any vanilla or modded server.
 
-## Download
-
-Get the jar from [`dist/particlemuffler-neoforge-1.21.1-1.0.0.jar`](dist/particlemuffler-neoforge-1.21.1-1.0.0.jar) and put it in your `mods` folder. Requires NeoForge 21.1.x for Minecraft 1.21.1.
-
 ## Screenshots
 
 | Anchor with smoke at 50% density | Particle preview | Dark theme |
