@@ -7,6 +7,12 @@ same GUI layout, textures and workflow, with the sounds swapped for particles.
 
 It does not need to be installed on the server and works on any vanilla or modded server.
 
+## Screenshots
+
+| Anchor with smoke at 50% density | Particle preview | Dark theme |
+| --- | --- | --- |
+| ![Anchor and density slider](screenshots/anchor-density.png) | ![Preview button](screenshots/preview.png) | ![Dark theme](screenshots/dark-theme.png) |
+
 ## How it works
 
 1. Open the screen with the **Particles** button in your inventory, or bind the
