@@ -1,3 +1,5 @@
+<p align="center"><img src="icon.png" width="128" height="128" alt="Particle Muffler icon"></p>
+
 # Particle Muffler (NeoForge 1.21.1)
 
 A **client-side only** mod for picking which particles you see, either everywhere or only inside
