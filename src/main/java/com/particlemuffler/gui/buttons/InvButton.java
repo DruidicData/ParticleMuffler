@@ -1,11 +1,10 @@
 package com.particlemuffler.gui.buttons;
 
 import com.particlemuffler.Constants;
-import com.particlemuffler.gui.GuiColors;
 import com.particlemuffler.gui.MufflerScreen;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractButton;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
@@ -15,8 +14,13 @@ public class InvButton extends AbstractButton {
 
     public boolean hold = false;
 
+    private final Tooltip tooltip;
+
     public InvButton(int x, int y) {
         super(x, y, 11, 11, Component.translatable("particlemuffler.inventory.btn"));
+        //standard vanilla tooltip box, the same one used for item names
+        this.tooltip = Tooltip.create(getMessage());
+        setTooltip(tooltip);
     }
 
     @Override
@@ -27,12 +31,8 @@ public class InvButton extends AbstractButton {
     @Override
     protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         graphics.blit(Constants.texture(), getX(), getY(), 43f, 202f, 11, 11, 256, 256);
-        if (isHovered() && !hold) {
-            graphics.pose().pushPose();
-            graphics.pose().translate(0, 0, 300);
-            graphics.drawCenteredString(Minecraft.getInstance().font, getMessage(), getX() + 5, getY() + height + 1, GuiColors.WHITE_TEXT);
-            graphics.pose().popPose();
-        }
+        //hide the tooltip while the button is being dragged around
+        setTooltip(hold ? null : tooltip);
     }
 
     @Override
