@@ -1,6 +1,6 @@
 package com.particlemuffler.utils;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -9,18 +9,18 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class ParticleLists {
     /** Substrings from the config; matching particles are hidden from the Recent list. */
     public static final Set<String> forbiddenParticles = new HashSet<>();
-    public static final Map<ResourceLocation, Boolean> forbiddenCache = new ConcurrentHashMap<>();
+    public static final Map<Identifier, Boolean> forbiddenCache = new ConcurrentHashMap<>();
     /** mod id -> density (0..1) from the config. */
     public static final Map<String, Double> modsMuffled = new ConcurrentHashMap<>();
     /** Particles seen recently, oldest first. Guarded by itself. */
-    public static final LinkedHashSet<ResourceLocation> recentParticles = new LinkedHashSet<>();
+    public static final LinkedHashSet<Identifier> recentParticles = new LinkedHashSet<>();
     /** Globally muffled particles: id -> density (0 = never shown, 0.9 = 90% shown). */
-    public static final Map<ResourceLocation, Double> muffledParticles = new ConcurrentHashMap<>();
+    public static final Map<Identifier, Double> muffledParticles = new ConcurrentHashMap<>();
     public static final List<Anchor> anchorList = new ArrayList<>();
 
     private ParticleLists() {}
 
-    public static void addRecent(ResourceLocation id) {
+    public static void addRecent(Identifier id) {
         synchronized (recentParticles) {
             // re-insert so the most recent one is always last; LinkedHashSet makes this O(1)
             recentParticles.remove(id);
@@ -28,7 +28,7 @@ public final class ParticleLists {
         }
     }
 
-    public static List<ResourceLocation> recentSnapshot() {
+    public static List<Identifier> recentSnapshot() {
         synchronized (recentParticles) {
             return new ArrayList<>(recentParticles);
         }
@@ -40,7 +40,7 @@ public final class ParticleLists {
         }
     }
 
-    public static boolean isForbidden(ResourceLocation id) {
+    public static boolean isForbidden(Identifier id) {
         if (forbiddenParticles.isEmpty()) return false;
         return forbiddenCache.computeIfAbsent(id, loc -> {
             String s = loc.toString();

@@ -6,7 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -22,7 +22,7 @@ public final class ParticleFilter {
     public static boolean shouldSpawn(ParticleType<?> type, double x, double y, double z) {
         if (bypass) return true;
 
-        ResourceLocation id = BuiltInRegistries.PARTICLE_TYPE.getKey(type);
+        Identifier id = BuiltInRegistries.PARTICLE_TYPE.getKey(type);
         if (id == null) return true;
 
         if (!ParticleLists.isForbidden(id)) {
@@ -38,14 +38,14 @@ public final class ParticleFilter {
     }
 
     /** @return the fraction (0..1) of particles of this type that may spawn at that position. */
-    private static double getDensity(ResourceLocation id, double x, double y, double z) {
+    private static double getDensity(Identifier id, double x, double y, double z) {
         Double global = ParticleLists.muffledParticles.get(id);
         if (global != null) return global;
 
         if (!Config.disableAnchors.get()) {
             ClientLevel level = Minecraft.getInstance().level;
             if (level != null) {
-                double anchor = Anchor.getDensity(id, level.dimension().location(), x, y, z);
+                double anchor = Anchor.getDensity(id, level.dimension().identifier(), x, y, z);
                 if (anchor < 1D) return anchor;
             }
         }

@@ -5,7 +5,7 @@ import com.particlemuffler.Constants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.*;
 
@@ -25,8 +25,8 @@ public class Anchor {
     private Map<String, Double> muffledParticles = new TreeMap<>();
 
     // runtime caches, rebuilt lazily (transient = not saved)
-    private transient Map<ResourceLocation, Double> cache;
-    private transient ResourceLocation dimensionCache;
+    private transient Map<Identifier, Double> cache;
+    private transient Identifier dimensionCache;
 
     public Anchor(int id, String name) {
         this.id = id;
@@ -53,17 +53,17 @@ public class Anchor {
         return set ? new BlockPos(x, y, z) : null;
     }
 
-    public ResourceLocation getDimension() {
-        if (dimensionCache == null && dimension != null) dimensionCache = ResourceLocation.tryParse(dimension);
+    public Identifier getDimension() {
+        if (dimensionCache == null && dimension != null) dimensionCache = Identifier.tryParse(dimension);
         return dimensionCache;
     }
 
-    public Map<ResourceLocation, Double> getMuffledParticles() {
+    public Map<Identifier, Double> getMuffledParticles() {
         if (cache == null) {
-            Map<ResourceLocation, Double> map = new HashMap<>();
+            Map<Identifier, Double> map = new HashMap<>();
             if (muffledParticles == null) muffledParticles = new TreeMap<>();
             muffledParticles.forEach((k, v) -> {
-                ResourceLocation rl = ResourceLocation.tryParse(k);
+                Identifier rl = Identifier.tryParse(k);
                 if (rl != null) map.put(rl, v);
             });
             cache = Collections.unmodifiableMap(map);
@@ -75,17 +75,17 @@ public class Anchor {
 
     public void setRadius(int radius) { this.radius = radius; }
 
-    public void addParticle(ResourceLocation particle, double density) {
+    public void addParticle(Identifier particle, double density) {
         muffledParticles.put(particle.toString(), density);
         cache = null;
     }
 
-    public void replaceParticle(ResourceLocation particle, double density) {
+    public void replaceParticle(Identifier particle, double density) {
         muffledParticles.replace(particle.toString(), density);
         cache = null;
     }
 
-    public void removeParticle(ResourceLocation particle) {
+    public void removeParticle(Identifier particle) {
         muffledParticles.remove(particle.toString());
         cache = null;
     }
@@ -97,7 +97,7 @@ public class Anchor {
         this.y = pos.getY();
         this.z = pos.getZ();
         this.set = true;
-        this.dimension = player.clientLevel.dimension().location().toString();
+        this.dimension = player.level().dimension().identifier().toString();
         this.dimensionCache = null;
         if (this.radius == 0) this.radius = defaultRadius;
     }
@@ -123,7 +123,7 @@ public class Anchor {
     /**
      * @return the lowest density any Anchor covering this position assigns to the particle, or 1 if none.
      */
-    public static double getDensity(ResourceLocation particle, ResourceLocation levelDim, double px, double py, double pz) {
+    public static double getDensity(Identifier particle, Identifier levelDim, double px, double py, double pz) {
         double result = 1D;
         int maxRange = Config.maxAnchorRange.get();
         for (Anchor anchor : ParticleLists.anchorList) {
@@ -132,7 +132,7 @@ public class Anchor {
             double dx = px - (anchor.x + 0.5D), dy = py - (anchor.y + 0.5D), dz = pz - (anchor.z + 0.5D);
             if (dx * dx + dy * dy + dz * dz > (double) r * r) continue;
 
-            Map<ResourceLocation, Double> muffled = anchor.getMuffledParticles();
+            Map<Identifier, Double> muffled = anchor.getMuffledParticles();
             if (muffled.isEmpty()) continue;
             Double d = muffled.get(Constants.EVERYTHING);
             if (d == null) d = muffled.get(particle);

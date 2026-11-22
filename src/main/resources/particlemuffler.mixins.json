@@ -4,7 +4,8 @@
   "package": "com.particlemuffler.mixins",
   "compatibilityLevel": "JAVA_21",
   "client": [
-    "ParticleEngineMixin"
+    "ParticleEngineMixin",
+    "ClientLevelMixin"
   ],
   "injectors": {
     "defaultRequire": 1

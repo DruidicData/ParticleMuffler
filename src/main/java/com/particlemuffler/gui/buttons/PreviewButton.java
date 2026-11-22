@@ -3,7 +3,9 @@ package com.particlemuffler.gui.buttons;
 import com.particlemuffler.Constants;
 import com.particlemuffler.utils.ParticleFilter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.input.InputWithModifiers;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -12,10 +14,9 @@ import net.minecraft.core.particles.*;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.Nullable;
@@ -29,26 +30,26 @@ public class PreviewButton extends AbstractButton {
     @Nullable
     private final ParticleOptions options;
 
-    PreviewButton(int x, int y, ResourceLocation particle) {
+    PreviewButton(int x, int y, Identifier particle) {
         super(x, y, 10, 10, CommonComponents.EMPTY);
         this.setAlpha(0);
-        ParticleType<?> type = particle.equals(Constants.EVERYTHING) ? null : BuiltInRegistries.PARTICLE_TYPE.get(particle);
+        ParticleType<?> type = particle.equals(Constants.EVERYTHING) ? null : BuiltInRegistries.PARTICLE_TYPE.getValue(particle);
         this.options = type == null ? null : optionsFor(type);
         this.active = options != null;
     }
 
     @Override
-    protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+    protected void extractContents(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
         // the texture is drawn by MuffledSlider
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        return this.isMouseOver(mouseX, mouseY) && super.mouseClicked(mouseX, mouseY, button);
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+        return this.isMouseOver(event.x(), event.y()) && super.mouseClicked(event, doubleClick);
     }
 
     @Override
-    public void onPress() {
+    public void onPress(InputWithModifiers input) {
         Minecraft mc = Minecraft.getInstance();
         LocalPlayer player = mc.player;
         if (player == null || options == null) return;
@@ -84,11 +85,17 @@ public class PreviewButton extends AbstractButton {
         if (type == ParticleTypes.BLOCK) return new BlockParticleOption(ParticleTypes.BLOCK, Blocks.GRASS_BLOCK.defaultBlockState());
         if (type == ParticleTypes.BLOCK_MARKER) return new BlockParticleOption(ParticleTypes.BLOCK_MARKER, Blocks.BARRIER.defaultBlockState());
         if (type == ParticleTypes.FALLING_DUST) return new BlockParticleOption(ParticleTypes.FALLING_DUST, Blocks.SAND.defaultBlockState());
+        if (type == ParticleTypes.BLOCK_CRUMBLE) return new BlockParticleOption(ParticleTypes.BLOCK_CRUMBLE, Blocks.CREAKING_HEART.defaultBlockState());
         if (type == ParticleTypes.DUST_PILLAR) return new BlockParticleOption(ParticleTypes.DUST_PILLAR, Blocks.STONE.defaultBlockState());
-        if (type == ParticleTypes.ITEM) return new ItemParticleOption(ParticleTypes.ITEM, new ItemStack(Items.DIAMOND));
+        if (type == ParticleTypes.ITEM) return new ItemParticleOption(ParticleTypes.ITEM, Items.DIAMOND);
         if (type == ParticleTypes.DUST) return DustParticleOptions.REDSTONE;
         if (type == ParticleTypes.DUST_COLOR_TRANSITION) return DustColorTransitionOptions.SCULK_TO_REDSTONE;
         if (type == ParticleTypes.ENTITY_EFFECT) return ColorParticleOption.create(ParticleTypes.ENTITY_EFFECT, 0xFF8030FF);
+        if (type == ParticleTypes.TINTED_LEAVES) return ColorParticleOption.create(ParticleTypes.TINTED_LEAVES, 0xFF48B518);
+        if (type == ParticleTypes.FLASH) return ColorParticleOption.create(ParticleTypes.FLASH, 0xFFFFFFFF);
+        if (type == ParticleTypes.EFFECT) return SpellParticleOption.create(ParticleTypes.EFFECT, 0xFF8030FF, 1f);
+        if (type == ParticleTypes.INSTANT_EFFECT) return SpellParticleOption.create(ParticleTypes.INSTANT_EFFECT, 0xFFF82423, 1f);
+        if (type == ParticleTypes.DRAGON_BREATH) return PowerParticleOption.create(ParticleTypes.DRAGON_BREATH, 1f);
         if (type == ParticleTypes.SCULK_CHARGE) return new SculkChargeParticleOptions(0f);
         if (type == ParticleTypes.SHRIEK) return new ShriekParticleOption(0);
         return null;

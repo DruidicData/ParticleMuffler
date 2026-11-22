@@ -34,7 +34,7 @@ public final class InventoryButtonHandler {
             return;
         }
         AbstractContainerScreen<?> container = (AbstractContainerScreen<?>) screen;
-        InvButton button = new InvButton(container.getGuiLeft() + offsetX(creative), container.getGuiTop() + offsetY(creative));
+        InvButton button = new InvButton(container.getLeftPos() + offsetX(creative), container.getTopPos() + offsetY(creative));
         event.addListener(button);
         BUTTONS.put(screen, button);
     }
@@ -52,8 +52,8 @@ public final class InventoryButtonHandler {
             button.setY(event.getMouseY() - 5);
         } else {
             //recalculated every frame so it follows the recipe book
-            button.setX(container.getGuiLeft() + offsetX(creative));
-            button.setY(container.getGuiTop() + offsetY(creative));
+            button.setX(container.getLeftPos() + offsetX(creative));
+            button.setY(container.getTopPos() + offsetY(creative));
         }
     }
 
@@ -65,8 +65,8 @@ public final class InventoryButtonHandler {
         button.hold = false;
 
         AbstractContainerScreen<?> container = (AbstractContainerScreen<?>) event.getScreen();
-        int x = (int) event.getMouseX() - 5 - container.getGuiLeft();
-        int y = (int) event.getMouseY() - 5 - container.getGuiTop();
+        int x = (int) event.getMouseX() - 5 - container.getLeftPos();
+        int y = (int) event.getMouseY() - 5 - container.getTopPos();
         if (container instanceof CreativeModeInventoryScreen) {
             Config.creativeInvButtonHorizontal.set(x);
             Config.creativeInvButtonVertical.set(y);

@@ -1,6 +1,8 @@
 # Changelog
 
 ## Unreleased
+- Ported to Minecraft / NeoForge 26.1.2.
+- If a save file can't be read, it is now kept as a `.broken` copy instead of being overwritten.
 - The inventory button's hover label now uses the standard tooltip box, matching item names.
 
 ## 1.0.1

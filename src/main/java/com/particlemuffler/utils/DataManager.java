@@ -9,7 +9,7 @@ import com.particlemuffler.gui.MufflerScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.server.IntegratedServer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -39,7 +39,7 @@ public final class DataManager {
         Map<String, Double> muffled = read(ROOT.resolve("particlesMuffled.json"), new TypeToken<Map<String, Double>>() {});
         if (muffled != null) {
             muffled.forEach((k, v) -> {
-                ResourceLocation rl = ResourceLocation.tryParse(k);
+                Identifier rl = Identifier.tryParse(k);
                 if (rl != null && v != null) ParticleLists.muffledParticles.put(rl, v);
             });
         }
@@ -85,7 +85,14 @@ public final class DataManager {
         } catch (NoSuchFileException e) {
             Constants.LOG.info("Particle Muffler: {} not found, creating it", ROOT.relativize(file));
         } catch (Exception e) {
-            Constants.LOG.error("Particle Muffler: error loading {}", file, e);
+            //keep the unreadable file instead of overwriting it with an empty list on the next save
+            Path backup = file.resolveSibling(file.getFileName() + ".broken");
+            Constants.LOG.error("Particle Muffler: error loading {}, keeping a copy as {}", file, backup.getFileName(), e);
+            try {
+                Files.copy(file, backup, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException copyError) {
+                Constants.LOG.error("Particle Muffler: could not back up {}", file, copyError);
+            }
         }
         return null;
     }

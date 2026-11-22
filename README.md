@@ -1,6 +1,6 @@
 <p align="center"><img src="icon.png" width="128" height="128" alt="Particle Muffler icon"></p>
 
-# Particle Muffler (NeoForge 1.21.1)
+# Particle Muffler (NeoForge 26.1.2)
 
 A **client-side only** mod for picking which particles you see, either everywhere or only inside
 configurable areas. It is the particle counterpart of
@@ -71,7 +71,7 @@ by type, so they cannot be muffled.
 
 ## Building
 
-Requires Java 21.
+Requires Java 25. (The NeoForge 1.21.1 version is on the `main` branch.)
 
 ```bash
 ./gradlew build
